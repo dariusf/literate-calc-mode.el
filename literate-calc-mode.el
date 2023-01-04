@@ -54,6 +54,13 @@ If any of these functions returns non-nil, overlays will not be displayed."
   :group 'literate-calc-mode
   :type 'hook)
 
+(defcustom literate-calc-mode-align-column nil
+  "The column to align computed results at. If enabled, lines which are too long will have computed results shown on the next line.
+
+Set to nil to disable alignment."
+  :group 'literate-calc-mode
+  :type '(choice integer))
+
 (defcustom literate-calc-mode-idle-time 1
   "How long to wait after typing to recalculate results.
 
@@ -149,10 +156,12 @@ NAME should be an empty string if RESULT is not bound."
                           nil
                           t
                           t))
-         (padding (- 40 (- (line-end-position) (line-beginning-position))))
-				 (text (if (< padding 0)
-						 (concat "\n " (literate-calc--format-result name result))
-					   (concat (make-string padding ? ) (literate-calc--format-result name result)))))
+         (padding (- (or literate-calc-mode-align-column 0)
+										 (- (line-end-position) (line-beginning-position))))
+				 (text (cond
+								((not literate-calc-mode-align-column) (literate-calc--format-result name result))
+								((< padding 0) (concat "\n " (literate-calc--format-result name result)))
+								(t (concat (make-string padding ? ) (literate-calc--format-result name result))))))
     (overlay-put o 'literate-calc t)
     (overlay-put o 'evaporate t)
     (overlay-put o 'after-string
