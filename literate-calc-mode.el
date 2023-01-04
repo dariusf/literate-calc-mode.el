@@ -149,12 +149,14 @@ NAME should be an empty string if RESULT is not bound."
                           nil
                           t
                           t))
-         (padding (max 0 (- 40 (- (line-end-position) (line-beginning-position))))))
+         (padding (- 40 (- (line-end-position) (line-beginning-position))))
+				 (text (if (< padding 0)
+						 (concat "\n " (literate-calc--format-result name result))
+					   (concat (make-string padding ? ) (literate-calc--format-result name result)))))
     (overlay-put o 'literate-calc t)
     (overlay-put o 'evaporate t)
     (overlay-put o 'after-string
-                 (propertize
-                  (concat "\n" (make-string padding ? ) (literate-calc--format-result name result))
+                 (propertize text
                   'face 'font-lock-comment-face
                   'cursor t))))
 
