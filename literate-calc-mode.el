@@ -154,7 +154,7 @@ NAME should be an empty string if RESULT is not bound."
     (overlay-put o 'evaporate t)
     (overlay-put o 'after-string
                  (propertize
-                  (string-pad (literate-calc--format-result name result) padding ?  t)
+                  (concat "\n" (make-string padding ? ) (literate-calc--format-result name result))
                   'face 'font-lock-comment-face
                   'cursor t))))
 
